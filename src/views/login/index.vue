@@ -50,7 +50,35 @@ export default {
         method: 'GET',
         url: `http://ttapi.research.itcast.cn/mp/v1_0/captchas/${mobile}`
       }).then(res => {
-        console.log(res.data)
+        const { data } = res.data
+        window.initGeetest(
+          {
+            // 以下配置参数来自服务端 SDK
+            gt: data.gt,
+            challenge: data.challenge,
+            offline: !data.success,
+            new_captcha: true,
+            product: 'bind'
+          },
+          function (captchaObj) {
+            // 这里可以调用验证实例 captchaObj 的实例方法
+            // console.log(captchaObj)
+            captchaObj
+              .onReady(function () {
+                // 验证码ready之后才能调用verify方法显示验证码
+                captchaObj.verify() // 弹出验证码内容框
+              })
+              .onSuccess(function () {
+                // your code
+                console.log(captchaObj.getValidate())
+              })
+              .onError(function () {
+                // your code
+              })
+
+            // 在这里注册“发送验证码”按钮的点击事件，然后进行验证用户是否输入手机号，以及手机号格式是否正确，没有问题：调用captchaObj.verify方法
+          }
+        )
       })
     }
   }
@@ -71,10 +99,10 @@ export default {
     padding: 20px;
     border-radius: 20px;
     .login-denglu {
+      width: 100%;
+      .el-button {
         width: 100%;
-        .el-button {
-            width: 100%;
-        }
+      }
     }
     p {
       width: 100%;
