@@ -1,5 +1,5 @@
 <template>
-  <div class="login-wrap">
+  <div class='login-wrap'>
     <!-- 给组件加 class， 会把class作用到组件的根元素上 -->
     <!-- 配置校验规则
             reles 规则对象配置到 el-form 上
@@ -7,25 +7,25 @@
          JavaScript 触发验证
             给 el-form 添加 ref
             调用 this.$refs['ref名字'].validate(valie => {}) 触发验证
-     -->
-    <el-form class="login-form" ref="form" :model="form" :rules="rules">
+    -->
+    <el-form class='login-form' ref='form' :model='form' :rules='rules'>
       <p>
-        <img src="@/assets/logo_index.png" alt>
+        <img src='@/assets/logo_index.png' alt>
       </p>
-      <el-form-item prop="mobile">
-        <el-input v-model="form.mobile" placeholder="手机号"></el-input>
+      <el-form-item prop='mobile'>
+        <el-input v-model='form.mobile' placeholder='手机号'></el-input>
       </el-form-item>
-      <el-form-item prop="code">
+      <el-form-item prop='code'>
         <!-- el-col 栅格布局，一共 24 列，:span 用来指定占用的大小，:offset 用来指定偏移量 -->
-        <el-col :span="14">
-          <el-input v-model="form.code" placeholder="验证码"></el-input>
+        <el-col :span='14'>
+          <el-input v-model='form.code' placeholder='验证码'></el-input>
         </el-col>
-        <el-col :offset="1" :span="9">
-          <el-button type="primary" @click="handleSendCode">获取验证码</el-button>
+        <el-col :offset='1' :span='9'>
+          <el-button type='primary' @click='handleSendCode'>获取验证码</el-button>
         </el-col>
       </el-form-item>
-      <el-form-item class="login-denglu">
-        <el-button type="primary" @click="handleLogin">登录</el-button>
+      <el-form-item class='login-denglu'>
+        <el-button type='primary' @click='handleLogin'>登录</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -97,6 +97,19 @@ export default {
     },
 
     handleSendCode () {
+      // 验证手机号是否有效
+      this.$refs['form'].validateField('mobile', errorMessage => {
+        // 如果校验失败
+        if (errorMessage.trim().length > 0) {
+          return
+        }
+
+        // 验证码通过，初始化显示验证码
+        this.showGeetest()
+      })
+    },
+
+    showGeetest () {
       const mobile = this.form.mobile
       axios({
         method: 'GET',
