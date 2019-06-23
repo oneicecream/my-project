@@ -30,7 +30,7 @@
           >{{ codeTimer ? `剩余${codeTimeSeconds}秒` : '获取验证码' }}</el-button>
         </el-col>
       </el-form-item>
-      <el-form-item prop="agree">
+      <el-form-item prop="agrss">
         <el-checkbox v-model="form.agrss">我同意该<a href="#">协议</a></el-checkbox>
       </el-form-item>
       <el-form-item class='login-denglu'>
@@ -66,7 +66,7 @@ export default {
           // { len: 6 , message: '请输入正确的验证码', trigger: 'blur' }
           { pattern: /\d{6}/, message: '请输入正确的验证码', trigger: 'blur' }
         ],
-        agree: [
+        agrss: [
           { required: true, message: '请同意用户协议' },
           { pattern: /true/, message: '清同意用户协议' }
         ]
