@@ -21,8 +21,17 @@
           <el-input v-model='form.code' placeholder='验证码'></el-input>
         </el-col>
         <el-col :offset='1' :span='9'>
-          <el-button type='primary' @click='handleSendCode'>获取验证码</el-button>
+          <!-- <el-button type='primary' @click='handleSendCode'>获取验证码</el-button> -->
+          <!-- :disabled 禁用状态 当codeTimer中有定时器时禁用，当codeTimer中的定时器被清楚时 此按钮恢复使用 -->
+          <el-button
+          type='primary'
+          @click='handleSendCode'
+          :disabled='!!codeTimer'
+          >{{ codeTimer ? `剩余${codeTimeSeconds}秒` : '获取验证码' }}</el-button>
         </el-col>
+      </el-form-item>
+      <el-form-item prop="agree">
+        <el-checkbox v-model="form.agrss">我同意该<a href="#">协议</a></el-checkbox>
       </el-form-item>
       <el-form-item class='login-denglu'>
         <el-button type='primary' @click='handleLogin'>登录</el-button>
@@ -34,6 +43,7 @@
 <script>
 import axios from 'axios'
 import '@/vendor/gt'
+const initCodeTimeSeconds = 10 // codeTimeSeconds 的初始值
 // 引入极验 JavaScript SDK 文件， 通过window.initGeetest 使用
 
 export default {
@@ -42,9 +52,10 @@ export default {
     return {
       form: {
         mobile: '',
-        code: ''
+        code: '',
+        agrss: ''
       },
-      rules: {
+      rules: { // 验证规则对象
         mobile: [
           { required: true, message: '请输入手机号', trigger: 'blur' },
           // { len: 11 , message: '长度必须11位', trigger: 'blur' }
@@ -54,8 +65,14 @@ export default {
           { required: true, message: '请输入验证码', trigger: 'blur' },
           // { len: 6 , message: '请输入正确的验证码', trigger: 'blur' }
           { pattern: /\d{6}/, message: '请输入正确的验证码', trigger: 'blur' }
+        ],
+        agree: [
+          { required: true, message: '请同意用户协议' },
+          { pattern: /true/, message: '清同意用户协议' }
         ]
-      }
+      },
+      codeTimer: null, // 倒计时定时器
+      codeTimeSeconds: initCodeTimeSeconds // 倒计时时间
     }
   },
   methods: {
@@ -104,12 +121,13 @@ export default {
           return
         }
 
-        // 验证码通过，初始化显示验证码
+        // 验证码通过，初始化显示人机交互验证码
         this.showGeetest()
       })
     },
 
     showGeetest () {
+      // 任何函数中的 function 内部的 this 指向 window
       const mobile = this.form.mobile
       axios({
         method: 'GET',
@@ -125,15 +143,15 @@ export default {
             new_captcha: true,
             product: 'bind'
           },
-          function (captchaObj) {
+          captchaObj => {
             // 这里可以调用验证实例 captchaObj 的实例方法
             // console.log(captchaObj)
             captchaObj
-              .onReady(function () {
+              .onReady(() => {
                 // 验证码ready之后才能调用verify方法显示验证码
                 captchaObj.verify() // 弹出验证码内容框
               })
-              .onSuccess(function () {
+              .onSuccess(() => {
                 // your code
                 // console.log(captchaObj.getValidate())
                 const {
@@ -150,7 +168,10 @@ export default {
                     seccode
                   }
                 }).then(res => {
+                  // 发送短信成功，开始倒计时
                   // console.log (res.data)
+                  // 调用倒计时函数
+                  this.codeCountDown()
                 })
               })
               .onError(function () {
@@ -161,6 +182,20 @@ export default {
           }
         )
       })
+    },
+
+    //  验证码倒计时
+    codeCountDown () {
+      this.codeTimer = window.setInterval(() => {
+        this.codeTimeSeconds--
+        if (this.codeTimeSeconds <= 0) {
+          // 清除定时器
+          window.clearInterval(this.codeTimer)
+          // 让倒计时的时间回归初始状态
+          this.codeTimeSeconds = initCodeTimeSeconds
+          this.codeTimer = null // 将储存定时器引用的变量重新赋值为 null
+        }
+      }, 1000)
     }
   }
 }
