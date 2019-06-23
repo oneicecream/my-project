@@ -11,7 +11,7 @@ export default new Router({
     //   component: () => import('@/views/home/index.vue')
     // },
     { // layout 显示到根组件的路由出口
-      name: 'layout',
+      // name: 'layout',  // 使用 JavaScript 命名路由导航不会渲染默认子路由
       path: '/',
       component: () => import('@/views/layout'),
       // 嵌套路由：

@@ -7,7 +7,7 @@
           el-submenu
            index 用来区分不同的导航项目的，可以用作路由导航路径，必须为1，否则会出现菜单冲突
       -->
-       <el-menu
+  <el-menu
     default-active="2"
     @open="handleOpen"
     @close="handleClose"
