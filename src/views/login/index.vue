@@ -1,14 +1,21 @@
 <template>
   <div class="login-wrap">
     <!-- 给组件加 class， 会把class作用到组件的根元素上 -->
-    <el-form class="login-form" ref="form" :model="form">
+    <!-- 配置校验规则
+            reles 规则对象配置到 el-form 上
+            prop  校验字段配置到 el-form-item 上
+         JavaScript 触发验证
+            给 el-form 添加 ref
+            调用 this.$refs['ref名字'].validate(valie => {}) 触发验证
+     -->
+    <el-form class="login-form" ref="form" :model="form" :rules="rules">
       <p>
         <img src="@/assets/logo_index.png" alt>
       </p>
-      <el-form-item>
+      <el-form-item prop="mobile">
         <el-input v-model="form.mobile" placeholder="手机号"></el-input>
       </el-form-item>
-      <el-form-item>
+      <el-form-item prop="code">
         <!-- el-col 栅格布局，一共 24 列，:span 用来指定占用的大小，:offset 用来指定偏移量 -->
         <el-col :span="14">
           <el-input v-model="form.code" placeholder="验证码"></el-input>
@@ -18,7 +25,7 @@
         </el-col>
       </el-form-item>
       <el-form-item class="login-denglu">
-        <el-button type="primary" @click="onSubmit">登录</el-button>
+        <el-button type="primary" @click="handleLogin">登录</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -36,12 +43,57 @@ export default {
       form: {
         mobile: '',
         code: ''
+      },
+      rules: {
+        mobile: [
+          { required: true, message: '请输入手机号', trigger: 'blur' },
+          // { len: 11 , message: '长度必须11位', trigger: 'blur' }
+          { pattern: /\d{11}/, message: '长度必须11位', trigger: 'blur' }
+        ],
+        code: [
+          { required: true, message: '请输入验证码', trigger: 'blur' },
+          // { len: 6 , message: '请输入正确的验证码', trigger: 'blur' }
+          { pattern: /\d{6}/, message: '请输入正确的验证码', trigger: 'blur' }
+        ]
       }
     }
   },
   methods: {
-    onSubmit () {
-      console.log('submit!')
+    handleLogin () {
+      this.$refs['form'].validate(valid => {
+        if (!valid) {
+          return
+        }
+        // 表单验证通过，提交登录请求
+        this.submitLogin()
+      })
+    },
+
+    submitLogin () {
+      // const { mobile, code } = this.form
+      axios({
+        method: 'POST',
+        url: 'http://ttapi.research.itcast.cn/mp/v1_0/authorizations',
+        // data: {
+        //     mobile,
+        //     code
+        // }
+        data: this.form
+      })
+        .then(res => {
+          // >=200 && <400 的状态码会进入then成功
+          this.$message({
+            message: '登录成功',
+            type: 'success'
+          })
+          this.$router.push({
+            name: 'home'
+          })
+          // console.log(res.data)
+        })
+        .catch(e => {
+          this.$message.error('登录失败，手机号或验证码错误')
+        }) // >= 400 的状态码都会进入这里
     },
 
     handleSendCode () {
@@ -71,7 +123,8 @@ export default {
               .onSuccess(function () {
                 // your code
                 // console.log(captchaObj.getValidate())
-                const { geetest_challenge: challenge,
+                const {
+                  geetest_challenge: challenge,
                   geetest_validate: validate,
                   geetest_seccode: seccode
                 } = captchaObj.getValidate()
@@ -84,7 +137,7 @@ export default {
                     seccode
                   }
                 }).then(res => {
-                  console.log(res.data)
+                  // console.log (res.data)
                 })
               })
               .onError(function () {
