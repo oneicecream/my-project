@@ -22,12 +22,12 @@ import AppHeader from './components/AppHeader'
 
 export default {
   name: 'AppLayout',
-  data () {
-    return {}
-  },
   components: {
     AppAside,
     AppHeader
+  },
+  data () {
+    return {}
   }
 }
 </script>
