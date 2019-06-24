@@ -43,7 +43,8 @@
 <script>
 import axios from 'axios'
 import '@/vendor/gt'
-const initCodeTimeSeconds = 10 // codeTimeSeconds 的初始值
+import { saveUser } from '@/utils/auth' // 按需加载，加载模块中非 export defaule 成员
+const initCodeTimeSeconds = 60 // codeTimeSeconds 的初始值
 // 引入极验 JavaScript SDK 文件， 通过window.initGeetest 使用
 
 export default {
@@ -100,7 +101,8 @@ export default {
         .then(res => {
           // >=200 && <400 的状态码会进入then成功
           const userInfo = res.data.data
-          window.localStorage.setItem('user_info', JSON.stringify(userInfo))
+          // window.localStorage.setItem('user_info', JSON.stringify(userInfo))
+          saveUser(userInfo)
           this.$message({
             message: '登录成功',
             type: 'success'

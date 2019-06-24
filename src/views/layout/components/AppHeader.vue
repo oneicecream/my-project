@@ -1,12 +1,12 @@
 <template>
   <div>
     <el-row :gutter="20">
-      <el-col :span="10">江苏传智播客教育科技股份有限公司</el-col>
-      <el-col :span="2" offset="5">123</el-col>
+      <el-col :span="19">江苏传智播客教育科技股份有限公司</el-col>
+      <!-- <el-col :span="2" offset="5"></el-col> -->
       <!-- <el-dropdown trigger="click" @command="handleCommand"> -->
       <el-dropdown trigger="click">
         <span class="el-dropdown-link" style="cursor:pointer">
-          <img width="30px" :src="userInfo.photo">
+          <img width="30" :src="userInfo.photo">
           {{ userInfo.name }}
           <i class="el-icon-arrow-down el-icon--right"></i>
         </span>
@@ -24,6 +24,8 @@
 </template>
 
 <script>
+import { removeUser, getUser } from '@/utils/auth'
+
 export default {
   name: 'AppHeader',
   data () {
@@ -32,7 +34,8 @@ export default {
     }
   },
   created () {
-    this.userInfo = JSON.parse(window.localStorage.getItem('user_info'))
+    // this.userInfo = JSON.parse(window.localStorage.getItem('user_info'))
+    this.userInfo = getUser()
   },
 
   methods: {
@@ -44,7 +47,8 @@ export default {
       })
         .then(() => {
           // 清空本地存储中的 user_info
-          window.localStorage.removeItem('user_info')
+          // window.localStorage.removeItem('user_info')
+          removeUser()
           // 跳转到登录页
           this.$router.push({ name: 'login' })
           this.$message({
@@ -67,4 +71,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+  .el-dropdown-link {
+    text-align: right
+  }
 </style>
