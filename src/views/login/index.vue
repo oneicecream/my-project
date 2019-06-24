@@ -99,6 +99,8 @@ export default {
       })
         .then(res => {
           // >=200 && <400 的状态码会进入then成功
+          const userInfo = res.data.data
+          window.localStorage.setItem('user_info', JSON.stringify(userInfo))
           this.$message({
             message: '登录成功',
             type: 'success'

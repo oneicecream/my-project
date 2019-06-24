@@ -48,6 +48,7 @@ export default {
 
 .el-header {
   background: #aec0d1;
+  line-height: 60px;
 }
 
 .el-main {
