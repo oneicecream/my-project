@@ -9,7 +9,7 @@ export function getUser () {
 }
 
 export function saveUser (data) {
-  localStorage.serItem(USER_KEY, JSON.stringify(data))
+  localStorage.setItem(USER_KEY, JSON.stringify(data))
 }
 
 export function removeUser () {

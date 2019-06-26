@@ -44,6 +44,7 @@
 import axios from 'axios'
 import '@/vendor/gt'
 import { saveUser } from '@/utils/auth' // 按需加载，加载模块中非 export defaule 成员
+// import { constants } from 'crypto'
 const initCodeTimeSeconds = 60 // codeTimeSeconds 的初始值
 // 引入极验 JavaScript SDK 文件， 通过window.initGeetest 使用
 
@@ -73,7 +74,7 @@ export default {
         ]
       },
       codeTimer: null, // 倒计时定时器
-      codeTimeSeconds: initCodeTimeSeconds // 倒计时时间
+      codeTimeSeconds: initCodeTimeSeconds // 倒计时时间.,h
     }
   },
   methods: {
@@ -91,7 +92,7 @@ export default {
       // const { mobile, code } = this.form
       axios({
         method: 'POST',
-        url: 'http://ttapi.research.itcast.cn/mp/v1_0/authorizations',
+        url: 'http://toutiao.course.itcast.cn/mp/v1_0/authorizations',
         // data: {
         //     mobile,
         //     code
@@ -101,6 +102,7 @@ export default {
         .then(res => {
           // >=200 && <400 的状态码会进入then成功
           const userInfo = res.data.data
+          console.log(userInfo)
           // window.localStorage.setItem('user_info', JSON.stringify(userInfo))
           saveUser(userInfo)
           this.$message({
@@ -113,7 +115,8 @@ export default {
           // console.log(res.data)
         })
         .catch(e => {
-          this.$message.error('登录失败，手机号或验证码错误')
+          console.log(e)
+          // this.$message.error('登录失败，手机号或验证码错误')
         }) // >= 400 的状态码都会进入这里
     },
 
@@ -128,79 +131,79 @@ export default {
         // 验证码通过，初始化显示人机交互验证码
         this.showGeetest()
       })
-    },
+    }
 
-    showGeetest () {
-      // 任何函数中的 function 内部的 this 指向 window
-      const mobile = this.form.mobile
-      axios({
-        method: 'GET',
-        url: `http://ttapi.research.itcast.cn/mp/v1_0/captchas/${mobile}`
-      }).then(res => {
-        const { data } = res.data
-        window.initGeetest(
-          {
-            // 以下配置参数来自服务端 SDK
-            gt: data.gt,
-            challenge: data.challenge,
-            offline: !data.success,
-            new_captcha: true,
-            product: 'bind'
-          },
-          captchaObj => {
-            // 这里可以调用验证实例 captchaObj 的实例方法
-            // console.log(captchaObj)
-            captchaObj
-              .onReady(() => {
-                // 验证码ready之后才能调用verify方法显示验证码
-                captchaObj.verify() // 弹出验证码内容框
-              })
-              .onSuccess(() => {
-                // your code
-                // console.log(captchaObj.getValidate())
-                const {
-                  geetest_challenge: challenge,
-                  geetest_validate: validate,
-                  geetest_seccode: seccode
-                } = captchaObj.getValidate()
-                axios({
-                  method: 'GET',
-                  url: `http://ttapi.research.itcast.cn/mp/v1_0/sms/codes/${mobile}`,
-                  params: {
-                    challenge,
-                    validate,
-                    seccode
-                  }
-                }).then(res => {
-                  // 发送短信成功，开始倒计时
-                  // console.log (res.data)
-                  // 调用倒计时函数
-                  this.codeCountDown()
-                })
-              })
-              .onError(function () {
-                // your code
-              })
+    // showGeetest () {
+    //   // 任何函数中的 function 内部的 this 指向 window
+    //   const mobile = this.form.mobile
+    //   axios({
+    //     method: 'GET',
+    //     url: `http://toutiao.course.itcast.cn/mp/v1_0/captchas/${mobile}`
+    //   }).then(res => {
+    //     const { data } = res.data
+    //     window.initGeetest(
+    //       {
+    //         // 以下配置参数来自服务端 SDK
+    //         gt: data.gt,
+    //         challenge: data.challenge,
+    //         offline: !data.success,
+    //         new_captcha: true,
+    //         product: 'bind'
+    //       },
+    //       captchaObj => {
+    //         // 这里可以调用验证实例 captchaObj 的实例方法
+    //         // console.log(captchaObj)
+    //         captchaObj
+    //           .onReady(() => {
+    //             // 验证码ready之后才能调用verify方法显示验证码
+    //             captchaObj.verify() // 弹出验证码内容框
+    //           })
+    //           .onSuccess(() => {
+    //             // your code
+    //             // console.log(captchaObj.getValidate())
+    //             const {
+    //               geetest_challenge: challenge,
+    //               geetest_validate: validate,
+    //               geetest_seccode: seccode
+    //             } = captchaObj.getValidate()
+    //             axios({
+    //               method: 'GET',
+    //               url: `http://toutiao.course.itcast.cn/mp/v1_0/sms/codes/${mobile}`,
+    //               params: {
+    //                 challenge,
+    //                 validate,
+    //                 seccode
+    //               }
+    //             }).then(res => {
+    //               // 发送短信成功，开始倒计时
+    //               // console.log (res.data)
+    //               // 调用倒计时函数
+    //               this.codeCountDown()
+    //             })
+    //           })
+    //           .onError(function () {
+    //             // your code
+    //           })
 
-            // 在这里注册“发送验证码”按钮的点击事件，然后进行验证用户是否输入手机号，以及手机号格式是否正确，没有问题：调用captchaObj.verify方法
-          }
-        )
-      })
-    },
+    //         // 在这里注册“发送验证码”按钮的点击事件，然后进行验证用户是否输入手机号，以及手机号格式是否正确，没有问题：调用captchaObj.verify方法
+    //       }
+    //     )
+    //   })
+    // },
 
     //  验证码倒计时
-    codeCountDown () {
-      this.codeTimer = window.setInterval(() => {
-        this.codeTimeSeconds--
-        if (this.codeTimeSeconds <= 0) {
-          // 清除定时器
-          window.clearInterval(this.codeTimer)
-          // 让倒计时的时间回归初始状态
-          this.codeTimeSeconds = initCodeTimeSeconds
-          this.codeTimer = null // 将储存定时器引用的变量重新赋值为 null
-        }
-      }, 1000)
-    }
+    // codeCountDown () {
+    //   this.codeTimer = window.setInterval(() => {
+    //     this.codeTimeSeconds--
+    //     if (this.codeTimeSeconds <= 0) {
+    //       // 清除定时器
+    //       window.clearInterval(this.codeTimer)
+    //       // 让倒计时的时间回归初始状态
+    //       this.codeTimeSeconds = initCodeTimeSeconds
+    //       this.codeTimer = null // 将储存定时器引用的变量重新赋值为 null
+    //     }
+    //   }, 1000)
+    // }
   }
 }
 </script>
