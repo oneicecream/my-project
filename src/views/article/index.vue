@@ -18,18 +18,47 @@
         <span>一共有xxx条数据</span>
         <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
       </div>
+      <!--
+        table 表格不需要我们去手动 v-for  遍历
+        你只需要将数组数据交给 table 表格的 data 属性就可以了
+        然后配置 el-table-column 表格列组件即可
+          lable 猎头标题
+          prop  遍历项中的数据字段
+          width 列表宽度
+        表格默认把数据当做文本去输出
+        如果需要其他数据格式，则可以自动以表格列
+       -->
       <el-table
         class="article-list"
-        :data="tableData"
+        :data="articles"
         style="width: 100%">
         <el-table-column
-          prop="date"
-          label="日期"
+          prop="cover.images[0]"
+          label="封面"
+          width="180">
+          <!--
+            template 中的内容就是自定义表格列内容
+            如果需要在 templata 中访问遍历项数据，则需要给 template 配置slot-scope="scope"
+             slot-scope 属性名是固定的
+             scope 值是自己随便起的名字
+            结果就是：我们可以通过 scope.row 访问到当前遍历项对象就好比我们遍历中的item 一样
+           -->
+          <template slot-scope="scope">
+            <img
+            width="50"
+              v-for="item in scope.row.cover.images"
+              :key="item"
+              :src="item">
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="title"
+          label="标题"
           width="180">
         </el-table-column>
         <el-table-column
-          prop="name"
-          label="姓名"
+          prop="pubdate"
+          label="发布时间"
           width="180">
         </el-table-column>
         <el-table-column
@@ -55,23 +84,7 @@
 export default {
   data () {
     return {
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }]
+      articles: []
     }
   },
   created () {
@@ -90,7 +103,7 @@ export default {
         //   Authorization: `Bearer ${token}` // 后端要求: 将 token 以 'Bearer token' 的数据格式放到请求头的 Authorization 字段中
         // }
       })
-      console.log(data)
+      this.articles = data.results
     }
   }
 }
