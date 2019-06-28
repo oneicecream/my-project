@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 数据筛选 -->
-    <!-- <el-card class="filter-card">
+    <el-card class="filter-card">
       <div slot="header" class="clearfix">
         <span>数据筛选</span>
         <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
@@ -9,11 +9,11 @@
       <div v-for="o in 4" :key="o" class="text item">
         {{'列表内容 ' + o }}
       </div>
-    </el-card> -->
+    </el-card>
     <!-- 数据筛选 -->
 
     <!-- 文章列表 -->
-    <!-- <el-card class="box-card">
+    <el-card class="box-card">
       <div slot="header" class="clearfix">
         <span>一共有xxx条数据</span>
         <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
@@ -36,44 +36,44 @@
           prop="address"
           label="地址">
         </el-table-column>
-      </el-table> -->
+      </el-table>
 
       <!-- 数据分页 -->
-      <!-- <el-pagination
+      <el-pagination
         background
         layout="prev, pager, next"
         :total="1000">
-      </el-pagination> -->
+      </el-pagination>
       <!-- /数据分页 -->
-    <!-- </el-card> -->
+    </el-card>
     <!-- /文章列表 -->
   </div>
 </template>
 
 <script>
-// export default {
-//   data() {
-//       return {
-//         tableData: [{
-//           date: '2016-05-02',
-//           name: '王小虎',
-//           address: '上海市普陀区金沙江路 1518 弄'
-//         }, {
-//           date: '2016-05-04',
-//           name: '王小虎',
-//           address: '上海市普陀区金沙江路 1517 弄'
-//         }, {
-//           date: '2016-05-01',
-//           name: '王小虎',
-//           address: '上海市普陀区金沙江路 1519 弄'
-//         }, {
-//           date: '2016-05-03',
-//           name: '王小虎',
-//           address: '上海市普陀区金沙江路 1516 弄'
-//         }]
-//       }
-//     }
-// }
+export default {
+  data () {
+    return {
+      tableData: [{
+        date: '2016-05-02',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        date: '2016-05-04',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1517 弄'
+      }, {
+        date: '2016-05-01',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1519 弄'
+      }, {
+        date: '2016-05-03',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1516 弄'
+      }]
+    }
+  }
+}
 </script>
 
 <style lang="less" scoped>

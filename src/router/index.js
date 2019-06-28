@@ -28,12 +28,12 @@ const router = new Router({
           name: 'publish',
           path: '/publish', // 父路由的默认内容
           component: () => import('@/views/publish')
+        },
+        {
+          name: 'article',
+          path: '/article', // 父路由的默认内容
+          component: () => import('@/views/article')
         }
-        // {
-        //   name: 'article',
-        //   path: '/article', // 父路由的默认内容
-        //   component: () => import('@/views/article')
-        // }
       ]
     },
     {
