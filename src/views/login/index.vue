@@ -27,6 +27,7 @@
           type='primary'
           @click='handleSendCode'
           :disabled='!!codeTimer'
+          :loading="codeLoading"
           >{{ codeTimer ? `剩余${codeTimeSeconds}秒` : '获取验证码' }}</el-button>
         </el-col>
       </el-form-item>
@@ -34,7 +35,12 @@
         <el-checkbox v-model="form.agrss">我同意该<a href="#">协议</a></el-checkbox>
       </el-form-item>
       <el-form-item class='login-denglu'>
-        <el-button type='primary' @click='handleLogin'>登录</el-button>
+        <el-button
+         class="btn-login"
+         type='primary'
+         @click='handleLogin'
+         :loading="loginLoading"
+         >登录</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -74,7 +80,9 @@ export default {
         ]
       },
       codeTimer: null, // 倒计时定时器
-      codeTimeSeconds: initCodeTimeSeconds // 倒计时时间
+      codeTimeSeconds: initCodeTimeSeconds, // 倒计时时间
+      loginLoading: false, // 登陆中 loading
+      codeLoading: false
     }
   },
   methods: {
@@ -89,6 +97,7 @@ export default {
     },
 
     async submitLogin () {
+      this.loginLoading = true
       try {
         const userInfo = await this.$http({
           method: 'POST',
@@ -113,6 +122,7 @@ export default {
       } catch (err) { // >= 400 的状态码都会进入这里
         this.$message.error('登录失败，手机号或验证码错误')
       }
+      this.loginLoading = false
     },
 
     handleSendCode () {
@@ -129,47 +139,58 @@ export default {
     },
 
     async showGeetest () {
-      // 任何函数中的 function 内部的 this 指向 window
-      const mobile = this.form.mobile
-      const data = await this.$http({
-        method: 'GET',
-        url: `/captchas/${mobile}`
-      })
-
-      const captchaObj = await initGeetest({
+      try {
+        this.codeLoading = true
+        // 任何函数中的 function 内部的 this 指向 window
+        const mobile = this.form.mobile
+        const data = await this.$http({
+          method: 'GET',
+          url: `/captchas/${mobile}`
+        })
+        const captchaObj = await initGeetest({
         // 以下配置参数来自服务端 SDK
-        gt: data.gt,
-        challenge: data.challenge,
-        offline: !data.success,
-        new_captcha: true,
-        product: 'bind'
-      })
-      captchaObj.onReady(() => {
-        // 验证码ready之后才能调用verify方法显示验证码
-        captchaObj.verify() // 弹出验证码内容框
-      }).onSuccess(async () => {
+          gt: data.gt,
+          challenge: data.challenge,
+          offline: !data.success,
+          new_captcha: true,
+          product: 'bind'
+        })
+        captchaObj.onReady(() => {
+          this.codeLoading = false
+          // 验证码ready之后才能调用verify方法显示验证码
+          captchaObj.verify() // 弹出验证码内容框
+        }).onSuccess(async () => {
         // your code
         // console.log(captchaObj.getValidate())
-        const {
-          geetest_challenge: challenge,
-          geetest_validate: validate,
-          geetest_seccode: seccode
-        } = captchaObj.getValidate()
-        // 发送短信
-        await this.$http({
-          method: 'GET',
-          url: `/sms/codes/${mobile}`,
-          params: {
-            challenge,
-            validate,
-            seccode
+          try {
+            const {
+              geetest_challenge: challenge,
+              geetest_validate: validate,
+              geetest_seccode: seccode
+            } = captchaObj.getValidate()
+            // 发送短信
+            await this.$http({
+              method: 'GET',
+              url: `/sms/codes/${mobile}`,
+              params: {
+                challenge,
+                validate,
+                seccode
+              }
+            })
+            // 发送短信成功，开始倒计时
+            // console.log (res.data)
+            // 调用倒计时函数
+            this.codeCountDown()
+          } catch (err) {
+            this.$message.error('获取验证码失败')
+            this.codeLoading = false
           }
         })
-        // 发送短信成功，开始倒计时
-        // console.log (res.data)
-        // 调用倒计时函数
-        this.codeCountDown()
-      })
+      } catch (err) {
+        this.$message.error('获取验证码失败')
+        this.codeLoading = false
+      }
     },
 
     //  验证码倒计时
