@@ -33,7 +33,6 @@
         :data="articles"
         style="width: 100%">
         <el-table-column
-          prop="cover.images[0]"
           label="封面"
           width="180">
           <!--
@@ -55,6 +54,13 @@
           prop="title"
           label="标题"
           width="180">
+        </el-table-column>
+        <el-table-column
+          label="状态"
+          width="180">
+          <template slot-scope="scope">
+            <el-tag :type="statTypes[scope.row.status].type">{{ statTypes[scope.row.status].label }}</el-tag>
+          </template>
         </el-table-column>
         <el-table-column
           prop="pubdate"
@@ -84,7 +90,29 @@
 export default {
   data () {
     return {
-      articles: []
+      articles: [],
+      statTypes: [
+        {
+          type: 'info',
+          label: '草稿'
+        },
+        {
+          type: '',
+          label: '待审核'
+        },
+        {
+          type: 'success',
+          label: '审核通过'
+        },
+        {
+          type: 'warning',
+          label: '审核失败'
+        },
+        {
+          type: 'danger',
+          label: '已删除'
+        }
+      ]
     }
   },
   created () {
