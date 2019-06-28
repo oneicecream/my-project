@@ -90,7 +90,7 @@ export default {
 
     async submitLogin () {
       try {
-        const res = await this.$http({
+        const userInfo = await this.$http({
           method: 'POST',
           url: '/authorizations',
           // data: {
@@ -100,7 +100,6 @@ export default {
           data: this.form
         })
         // >=200 && <400 的状态码会进入then成功
-        const userInfo = res.data.data
         // window.localStorage.setItem('user_info', JSON.stringify(userInfo))
         saveUser(userInfo)
         this.$message({
@@ -132,12 +131,10 @@ export default {
     async showGeetest () {
       // 任何函数中的 function 内部的 this 指向 window
       const mobile = this.form.mobile
-      const res = await this.$http({
+      const data = await this.$http({
         method: 'GET',
         url: `/captchas/${mobile}`
       })
-
-      const { data } = res.data
 
       const captchaObj = await initGeetest({
         // 以下配置参数来自服务端 SDK

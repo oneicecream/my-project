@@ -4,6 +4,7 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import 'nprogress/nprogress.css'
 import axios from 'axios'
+import { getUser } from '@/utils/auth'
 
 import router from './router'
 
@@ -14,6 +15,36 @@ import './styles/index.css'
 // 例如我要请求登录，直接axios({ url:'/authorizations'})
 // 路径最后的 /，多退少补
 axios.defaults.baseURL = 'http://toutiao.course.itcast.cn/mp/v1_0/'
+
+// axios 请求拦截器： axios 发出去的请求会先经过这里
+axios.interceptors.request.use(config => {
+  const user = getUser()
+
+  // confit 是本次请求相关的配置对象
+  // 如果有 user 数据，则往本次请求中添加用户 token
+  if (user) {
+    config.headers.Authorization = `Bearer ${user.token}`
+  }
+  // return config 是允许请求发送的开关
+  // 我们可以在这之前进行一些业务逻辑操作
+  return config
+}, error => {
+  return Promise.reject(error)
+})
+
+// 响应拦截器  axios 收到的响应会先经过这里
+axios.interceptors.response.use(response => {
+  // response 就是响应结果对象
+  // 这里将 response 原样返回，那么你发请求的地方受到的就是 response
+  // 我们可以控制请求受到的响应数据格式
+  if (typeof response.data === 'object' && response.data.data) {
+    return response.data.data
+  } else {
+    return response.data
+  }
+}, error => {
+  return Promise.reject(error)
+})
 
 Vue.use(ElementUI)
 
