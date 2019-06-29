@@ -6,22 +6,29 @@
         <span>数据筛选</span>
         <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
       </div>
-      <el-form ref="form" :model="form" label-width="80px">
+      <el-form ref="form" :model="filterParams" label-width="80px">
         <el-form-item label="状态">
-          <el-radio-group v-model="form.resource">
-            <el-radio label="线上品牌商赞助"></el-radio>
-            <el-radio label="线下场地免费"></el-radio>
+          <el-radio-group v-model="filterParams.status">
+            <el-radio label="">全部</el-radio>
+            <el-radio
+              v-for="(item, index) in statTypes"
+              :key="item.label"
+              :label="index"
+            >{{ item.label }}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="频道">
-          <el-select v-model="form.region" placeholder="请选择活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+          <el-select v-model="filterParams.channel_id" clearable>
+            <el-option
+              v-for="item in channels"
+              :key='item.id'
+              :label="item.name"
+              :value="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="时间">
           <el-date-picker
-            v-model="form.value1"
+            v-model="filterParams.begin_pubdate"
             type="daterange"
             range-separator="至"
             start-placeholder="开始日期"
@@ -152,24 +159,35 @@ export default {
       totalCount: 0, // 总数据量
       page: 1, // 当前页码
       articleLoading: false, // 加载中
-      form: {
-        name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: '',
-        value1: ''
-      }
+      filterParams: {
+        status: '', // 文章状态
+        channel_id: '', // 频道ID
+        begin_pubdate: '', // 开始时间
+        end_pubdate: '' // 结束时间
+      },
+      channels: [] // 所有频道
     }
   },
+
   created () {
     this.loadArticles()
+    this.loadChannels()
   },
 
   methods: {
+    async loadChannels () {
+      try {
+        const data = await this.$http({
+          method: 'GET',
+          url: '/channels'
+        })
+        this.channels = data.channels
+      } catch (err) {
+        console.log(err)
+        this.$message.error('获取频道数据失败')
+      }
+    },
+    onSubmit () {},
     async loadArticles () {
       // 请求开始，加载 loading
       this.articleLoading = true
