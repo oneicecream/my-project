@@ -6,7 +6,11 @@
 
 <script>
 export default {
-
+  name: 'publish',
+  data () {
+    return {
+    }
+  }
 }
 </script>
 

@@ -28,7 +28,9 @@
         </el-form-item>
         <el-form-item label="时间">
           <el-date-picker
-            v-model="filterParams.begin_pubdate"
+            value-format="yyyy-MM-dd"
+            v-model="range_date"
+            @change='handleDateChange'
             type="daterange"
             range-separator="至"
             start-placeholder="开始日期"
@@ -128,8 +130,10 @@
 </template>
 
 <script>
+// import { constants } from 'crypto'
 // import { getUser } from '@/utils/auth'
 export default {
+  name: 'ArticleList',
   data () {
     return {
       articles: [],
@@ -165,6 +169,7 @@ export default {
         begin_pubdate: '', // 开始时间
         end_pubdate: '' // 结束时间
       },
+      range_date: '', // 时间范围绑定值，这个字段的意义是为了绑定date 组件触发 change 事件
       channels: [] // 所有频道
     }
   },
@@ -175,6 +180,10 @@ export default {
   },
 
   methods: {
+    handleDateChange (value) {
+      this.filterParams.begin_pubdate = value[0]
+      this.filterParams.end_pubdate = value[1]
+    },
     async loadChannels () {
       try {
         const data = await this.$http({
