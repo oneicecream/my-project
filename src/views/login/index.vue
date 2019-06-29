@@ -99,6 +99,7 @@ export default {
     async submitLogin () {
       this.loginLoading = true
       try {
+        // const { mobile, code } = this.form
         const userInfo = await this.$http({
           method: 'POST',
           url: '/authorizations',
