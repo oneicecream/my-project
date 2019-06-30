@@ -105,9 +105,9 @@
         </el-table-column>
         <el-table-column
           label="操作">
-          <template>
+          <template slot-scope="scope">
             <el-button type="primary" plain>修改</el-button>
-            <el-button type="danger" plain>删除</el-button>
+            <el-button type="danger" plain @click="handleDelete(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -134,6 +134,7 @@
 </template>
 
 <script>
+// import { constants } from 'crypto'
 // import { constants } from 'crypto'
 // import { getUser } from '@/utils/auth'
 export default {
@@ -184,6 +185,10 @@ export default {
   },
 
   methods: {
+    handleDelete (item) {
+      console.log(item.id.toString())
+    },
+
     handleDateChange (value) {
       this.filterParams.begin_pubdate = value[0]
       this.filterParams.end_pubdate = value[1]
@@ -195,7 +200,6 @@ export default {
           url: '/channels'
         })
         this.channels = data.channels
-        console.log(data)
       } catch (err) {
         console.log(err)
         this.$message.error('获取频道数据失败')
