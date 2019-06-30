@@ -33,6 +33,11 @@ const router = new Router({
           name: 'article',
           path: '/article', // 父路由的默认内容
           component: () => import('@/views/article')
+        },
+        {
+          name: 'publish-edit',
+          path: '/publish/:id', // 父路由的默认内容
+          component: () => import('@/views/publish')
         }
       ]
     },
