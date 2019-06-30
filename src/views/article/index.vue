@@ -128,14 +128,14 @@
 </template>
 
 <script>
-import articleChannel from '@/components/article-channel'
+import ArticleChannel from '@/components/article-channel'
 // import { constants } from 'crypto'
 // import { constants } from 'crypto'
 // import { getUser } from '@/utils/auth'
 export default {
   name: 'ArticleList',
   components: {
-    articleChannel
+    ArticleChannel
   },
   data () {
     return {
