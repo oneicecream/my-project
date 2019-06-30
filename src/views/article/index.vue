@@ -18,13 +18,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="频道">
-          <el-select v-model="filterParams.channel_id" clearable>
-            <el-option
-              v-for="item in channels"
-              :key='item.id'
-              :label="item.name"
-              :value="item.id"></el-option>
-          </el-select>
+          <article-channel v-model="filterParams.channel_id"></article-channel>
         </el-form-item>
         <el-form-item label="时间">
           <el-date-picker
@@ -134,11 +128,15 @@
 </template>
 
 <script>
+import articleChannel from '@/components/article-channel'
 // import { constants } from 'crypto'
 // import { constants } from 'crypto'
 // import { getUser } from '@/utils/auth'
 export default {
   name: 'ArticleList',
+  components: {
+    articleChannel
+  },
   data () {
     return {
       articles: [],
@@ -174,14 +172,12 @@ export default {
         begin_pubdate: '', // 开始时间
         end_pubdate: '' // 结束时间
       },
-      range_date: '', // 时间范围绑定值，这个字段的意义是为了绑定date 组件触发 change 事件
-      channels: [] // 所有频道
+      range_date: '' // 时间范围绑定值，这个字段的意义是为了绑定date 组件触发 change 事件
     }
   },
 
   created () {
     this.loadArticles()
-    this.loadChannels()
   },
 
   methods: {
@@ -224,18 +220,6 @@ export default {
     handleDateChange (value) {
       this.filterParams.begin_pubdate = value[0]
       this.filterParams.end_pubdate = value[1]
-    },
-    async loadChannels () {
-      try {
-        const data = await this.$http({
-          method: 'GET',
-          url: '/channels'
-        })
-        this.channels = data.channels
-      } catch (err) {
-        console.log(err)
-        this.$message.error('获取频道数据失败')
-      }
     },
 
     handleFilter () {
