@@ -22,7 +22,7 @@
             <el-input v-model="user.email"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary">保存更新</el-button>
+            <el-button type="primary" @click="handleSave">保存更新</el-button>
           </el-form-item>
         </el-form>
       </el-col>
@@ -57,6 +57,27 @@ export default {
         this.$message.error('加载用户信息失败')
       }
       this.loading = false
+    },
+
+    async handleSave () {
+      try {
+        const { name, intro, email } = this.user
+        await this.$http({
+          method: 'PATCH',
+          url: '/user/profile',
+          data: {
+            name,
+            intro,
+            email
+          }
+        })
+        this.$message({
+          type: 'success',
+          message: '用户信息保存修改成功'
+        })
+      } catch (err) {
+        this.$message.error('用户信息保存失败')
+      }
     }
   }
 }
