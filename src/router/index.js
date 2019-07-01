@@ -48,6 +48,11 @@ const router = new Router({
           name: 'account',
           path: '/account', // 父路由的默认内容
           component: () => import('@/views/account')
+        },
+        {
+          name: 'media',
+          path: '/media', // 父路由的默认内容
+          component: () => import('@/views/media')
         }
       ]
     },
