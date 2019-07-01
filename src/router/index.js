@@ -43,6 +43,11 @@ const router = new Router({
           name: 'comment',
           path: '/comment', // 父路由的默认内容
           component: () => import('@/views/comment')
+        },
+        {
+          name: 'account',
+          path: '/account', // 父路由的默认内容
+          component: () => import('@/views/account')
         }
       ]
     },
