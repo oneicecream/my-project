@@ -38,6 +38,11 @@ const router = new Router({
           name: 'publish-edit',
           path: '/publish/:id', // 父路由的默认内容
           component: () => import('@/views/publish')
+        },
+        {
+          name: 'comment',
+          path: '/comment', // 父路由的默认内容
+          component: () => import('@/views/comment')
         }
       ]
     },
