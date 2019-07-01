@@ -6,8 +6,8 @@
       <!-- <el-dropdown trigger="click" @command="handleCommand"> -->
       <el-dropdown trigger="click">
         <span class="el-dropdown-link" style="cursor:pointer">
-          <img width="30" :src="userInfo.photo">
-          {{ userInfo.name }}
+          <img width="30" :src="$store.state.user.photo">
+          {{ $store.state.user.name }}
           <i class="el-icon-arrow-down el-icon--right"></i>
         </span>
         <el-dropdown-menu slot="dropdown">
@@ -24,18 +24,18 @@
 </template>
 
 <script>
-import { removeUser, getUser } from '@/utils/auth'
+import { removeUser } from '@/utils/auth'
 
 export default {
   name: 'AppHeader',
   data () {
     return {
-      userInfo: {}
+      // userInfo: {}
     }
   },
   created () {
     // this.userInfo = JSON.parse(window.localStorage.getItem('user_info'))
-    this.userInfo = getUser()
+    // this.userInfo = getUser()
   },
 
   methods: {
