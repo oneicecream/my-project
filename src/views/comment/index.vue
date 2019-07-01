@@ -10,6 +10,7 @@
       <el-table-column label="允许评论">
         <template slot-scope="scope">
           <el-switch
+            :disabled="scope.row.disabled"
             v-model="scope.row.comment_status"
             active-color="#13ce66"
             inactive-color="#ff4949"
@@ -26,7 +27,8 @@ export default {
   name: 'ArticleComment',
   data () {
     return {
-      articles: []
+      articles: [],
+      disabled: false
     }
   },
 
@@ -44,6 +46,9 @@ export default {
             response_type: 'comment'
           }
         })
+
+        // 手动造一个数据 disabled ，用来控制每一行的 switch  开关的禁用状态
+        data.results.forEach(item => { item.disabled = false })
         this.articles = data.results
       } catch (err) {
         this.$message.error('加载文章列表失败')
@@ -51,6 +56,10 @@ export default {
     },
     async handleChangeStatus (item) {
       try {
+        // 禁用当前行的 switch 开关
+        item.disabled = true
+
+        // 请求修改
         await this.$http({
           method: 'PUT',
           url: '/comments/status',
@@ -68,7 +77,13 @@ export default {
       } catch (err) {
         // console.log(err),
         this.$message.error('修改评论状态失败')
+
+        // 评论状态修改失败，让客户端的评论状态回到原来的状态
+        item.comment_status = !item.comment_status
       }
+
+      // 启用当前行的switch 开关
+      item.disabled = false
     }
   }
 }
