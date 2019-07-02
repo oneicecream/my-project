@@ -44,7 +44,7 @@
     <!-- 文章列表 -->
     <el-card class="box-card">
       <div slot="header" class="clearfix">
-        <span>一共有<strong>{{ totalCount }}</strong></span>
+        <span>一共有<strong>{{ totalCount }}</strong>条数据</span>
         <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
       </div>
       <!--
@@ -267,8 +267,9 @@ export default {
           //   Authorization: `Bearer ${token}` // 后端要求: 将 token 以 'Bearer token' 的数据格式放到请求头的 Authorization 字段中
           // }
         })
+        console.log(data)
         this.articles = data.results
-        this.totalCount = data.total_count
+        this.totalCount = data.results.length
         // 请求结束，停止 loading
         this.articleLoading = false
       } catch (err) {
