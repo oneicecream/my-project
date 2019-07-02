@@ -70,6 +70,7 @@ axios.interceptors.response.use(response => {
     return response.data
   }
 }, error => {
+  console.log(error)
   // 如果用户 token 无效，让其跳转到登录页面
   if (error.response.status === 401) {
     // 清楚本地储存中的无效 token 的用户信息

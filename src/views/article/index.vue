@@ -269,7 +269,7 @@ export default {
         })
         console.log(data)
         this.articles = data.results
-        this.totalCount = data.results.length
+        this.totalCount = data.total_count
         // 请求结束，停止 loading
         this.articleLoading = false
       } catch (err) {

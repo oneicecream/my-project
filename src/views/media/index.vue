@@ -23,7 +23,16 @@
                 circle
                 @click="handleCollect(item)"
               ></el-button>
-              <el-button plain type="primary" icon="el-icon-delete" circle></el-button>
+              <!-- 1. 注册点击事件，绑定处理函数，传递要删除的数据id
+                   2. 定义删除函数，发请求执行删除操作
+                   3. 成功：提示成功
+                      失败：提示失败-->
+              <el-button
+                plain type="primary"
+                icon="el-icon-delete"
+                circle
+                @click="handleDelete(item)"
+                ></el-button>
             </div>
           </div>
         </el-card>
@@ -85,6 +94,23 @@ export default {
       } catch (err) {
         console.log(err)
         this.$message.error('收藏失败')
+      }
+    },
+
+    async handleDelete (item) {
+      try {
+        await this.$http({
+          method: 'DELETE',
+          url: `/user/images/${item.id}`
+        })
+        this.$message({
+          type: 'success',
+          message: '删除成功'
+        })
+        // 重新加载数据列表
+        this.loadImages()
+      } catch (err) {
+        this.$message.error('删除失败')
       }
     }
   }
