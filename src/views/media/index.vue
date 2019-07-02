@@ -16,7 +16,24 @@
         <el-radio-button label="全部" @click.native="loadImages(false)"></el-radio-button>
         <el-radio-button label="收藏" @click.native="loadImages(true)"></el-radio-button>
       </el-radio-group>
-      <el-button type="primary">上传图片</el-button>
+      <!-- 这里我们可以直接使用 upload 上传组件进行图片上传
+        upload 组件支持自动请求，不用我们自己写代码，只需要配置一下请求接口
+        如果要使用它默认的请求能力，就无法使用我们在 axios 中做的那些配置了 例如 baseURL、请求拦截器等
+        1. action 请求地址
+        2. headers 请求头
+        3. name 字段名称
+        -->
+      <el-upload
+        class="upload-demo"
+        action="http://ttapi.research.itcast.cn/mp/v1_0/user/images"
+        :headers="{ Authorization:`Bearer ${$store.state.user.token}` }"
+        name="image"
+        :on-success="handleUploadSuccess"
+        :show-file-list="false"
+        >
+        <el-button size="small" type="primary">点击上传</el-button>
+        <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+      </el-upload>
     </div>
     <!-- 图片列表 -->
     <el-row :gutter="20">
@@ -120,6 +137,10 @@ export default {
       } catch (err) {
         this.$message.error('删除失败')
       }
+    },
+
+    handleUploadSuccess () {
+      this.loadImages()
     }
   }
 }
